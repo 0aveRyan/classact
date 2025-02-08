@@ -1,0 +1,21 @@
+{
+	"name": "classact",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"start": "wp-scripts start",
+		"build": "wp-scripts build",
+		"format": "wp-scripts format",
+		"plugin-zip": "wp-scripts plugin-zip"
+	},
+	"author": "Dave Ryan",
+	"license": "GPL-2.0-or-later",
+	"description": "",
+	"devDependencies": {
+		"@wordpress/block-editor": "^14.12.0",
+		"@wordpress/components": "^29.3.0",
+		"@wordpress/element": "^6.17.0",
+		"@wordpress/scripts": "^30.10.0",
+		"webpack-merge": "^6.0.1"
+	}
+}
