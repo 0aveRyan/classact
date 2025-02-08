@@ -1,0 +1,18 @@
+# Directories
+.git
+.github
+node_modules
+src
+bin
+
+# Files
+.distignore
+.gitignore
+.editorconfig
+
+# File Types
+*.json
+*.lock
+*.log
+*.dist
+*.zip
