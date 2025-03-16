@@ -1,6 +1,8 @@
 # ClassAct
 
-A miniplugin for managing CSS classes visually in the WordPress Block Editor.
+A miniplugin for managing CSS classes visually in the WordPress Block Editor. 
+
+### [Download](https://github.com/0aveRyan/classact/releases/download/2.0.0/classact.zip)
 
 https://github.com/user-attachments/assets/9a4b0713-4c6a-464d-b455-00f1120334a2
 
