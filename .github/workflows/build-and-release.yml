@@ -1,4 +1,4 @@
-name: Build Release Asset
+name: Build, Attest and Release
 
 on:
     release:
@@ -6,12 +6,15 @@ on:
 
 permissions:
     contents: write
+    id-token: write     # Required for attestation
+    attestations: write # Required for attestation
 
 jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - name: Checkout code
+              uses: actions/checkout@v4
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
@@ -26,6 +29,7 @@ jobs:
 
             - name: Build Plugin Zip
               run: npm run plugin-zip
+              id: build-zip
 
             - name: Upload Release Asset
               uses: actions/upload-release-asset@v1
@@ -36,3 +40,29 @@ jobs:
                   asset_path: ./classact.zip
                   asset_name: classact.zip
                   asset_content_type: application/zip
+                  
+            - name: Generate build provenance attestation
+              uses: johnbillion/action-wordpress-plugin-attestation@0.7.0
+              id: attestation
+              with:
+                  zip-path: ./classact.zip
+                  plugin: classact
+                  version: ${{ github.event.release.tag_name }}
+                  zip-url: 'https://updates.wpadmin.app/download/plugin/classact/${{ github.event.release.tag_name }}'
+                  
+            - name: Log Attestation Information
+              run: |
+                echo "Attestation ID: ${{ steps.attestation.outputs.attestation-id }}"
+                echo "Attestation URL: ${{ steps.attestation.outputs.attestation-url }}"
+                echo "Bundle Path: ${{ steps.attestation.outputs.bundle-path }}"
+                echo "ZIP URL: ${{ steps.attestation.outputs.zip-url }}"
+
+            - name: Notify Update Server
+              run: |
+                curl -X POST https://updates.wpadmin.app/invalidate \
+                  -H "Content-Type: application/json" \
+                  -d '{"type": "plugin", "slug": "classact", "secret": "${{ secrets.PRESSFLARE_WEBHOOK_KEY }}"}'
+
+            - name: Verify Update Cache Invalidation
+              run: |
+                curl -I https://updates.wpadmin.app/download/plugin/classact/${{ github.event.release.tag_name }}

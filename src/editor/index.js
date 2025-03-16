@@ -1,1 +1,2 @@
-import './controls';
+// import './controls';
+import './classact';

@@ -1,18 +1,57 @@
 # ClassAct
 
-A microplugin for acting on Additional CSS classes per-block in the WordPress Editor.
+A miniplugin for managing CSS classes visually in the WordPress Block Editor.
 
 ![classact-preview](https://github.com/user-attachments/assets/be2d005e-00fa-41db-b0c9-41042a5f6a05)
 
-The goal of this plugin is simple:
-* More easily see Additional CSS classes on a WordPress Block.
-* More easily and surgically remove additional CSS class names with a single click.
-* Preserves Core text input and stays in sync as you work.
+## Features
+
+- **Visual Token Management**: See and manipulate CSS classes as visual tokens
+- **Quick Actions**: One-click operations to copy, sort, and remove classes
+- **Enhanced Modal**: Full-featured class management modal with advanced sorting options
+- **Keyboard Shortcut**: Press `Alt+C` to quickly manage, copy and clear CSS classes for the selected block
+- **Hides Core CSS Field in Advanced Panel**: Hides the Core field using CSS -- easy to see and unhide (or just open the modal)
 
 ## Usage
-1. Upload and Activate Plugin
+
+1. Upload and activate the plugin
 2. Open the WordPress Block Editor
-3. In a Block Sidebar under the Advanced Panel, there is a field to work with CSS classes as tokens instead of a string.
+3. Select any block and navigate to the Advanced panel in the sidebar
+4. Use the token field to add, remove, and manage CSS classes
+
+## Key Workflows
+
+### Basic Class Management
+- **Add Classes**: Type class names and press Enter or Space
+- **Remove Classes**: Click the × on any token or press Backspace
+- **Automatic Validation**: Classes are validated to ensure they follow CSS naming rules
+
+### Quick Actions (Inspector Panel)
+- **Copy**: Quickly copy all classes to clipboard
+- **Sort**: Automatically sort classes alphabetically
+- **Clear**: Remove all classes from the block
+- **Manage**: Open the full class management modal
+
+### Class Management Modal (`option + c`|`alt + c`)
+- **Visual Overview**: See all classes with block info and class count
+- **Token Management**: Add/remove with the FormTokenField
+- **Direct Text Editing**: Edit classes directly in a text area
+- **Advanced Sorting**:
+  - **Auto Sort**: Intelligent sorting using best practices
+  - **Alpha Sort**: Alphabetical ordering
+  - **Length Sort**: Sort by class name length
+  - **Block Style to End**: Move WordPress style classes to the end
+- **Cleanup Options**:
+  - **Clear Custom**: Keep only WordPress style classes (is-style-*)
+  - **Clear All**: Remove all classes from the block
 
 ## Notes
-* The `<FormTokenField>` uses regex to attempt to limit inputs to valid CSS class names _(i.e., without a period)_. It can always be overridden using the text input above. YMMV.
+
+- The token field validates class names using regex to ensure proper CSS naming conventions
+- You can always override validation by using the text input
+- WordPress block style classes (`is-style-*`) receive special handling
+- All changes sync with the core WordPress class input field
+
+## Keyboard Shortcuts
+
+- `Alt+C`: Open the class management modal for the currently selected block

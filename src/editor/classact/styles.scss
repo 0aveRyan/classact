@@ -1,0 +1,200 @@
+/**
+ * ClassAct - CSS Class Management Styles
+ */
+
+// Import WordPress Base Styles - using @import for compatibility
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/z-index";
+
+// Block Inspector Styles
+.block-editor-block-inspector__advanced {
+  // When an HTML anchor is present, hide the immediate .components-base-control
+  .html-anchor-control + .components-base-control {
+    display: none !important;
+    visibility: hidden;
+  }
+
+  // If no .html-anchor-control exists, hide the first .components-base-control
+  &:not(:has(.html-anchor-control)) {
+    .components-base-control:first-of-type {
+      display: none !important;
+      visibility: hidden;
+    }
+  }
+}
+
+/* Styles for Block Title Display Component */
+.classact-block-title {
+  margin-bottom: $grid-unit-20; // 16px
+
+  &__container {
+    display: flex;
+    align-items: center;
+    font-family: $default-font;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: $grid-unit-10; // 8px
+    color: $gray-900; // WordPress gray
+    
+    .components-icon {
+      width: $grid-unit-30; // 24px
+      height: $grid-unit-30; // 24px
+    }
+  }
+
+  &__name {
+    font-size: $default-font-size; // 13px
+    font-weight: 500;
+    color: $gray-900;
+  }
+  
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--wp-admin-theme-color);
+    color: $white;
+    font-size: 11px;
+    padding: 0 6px; // Explicit value
+    border-radius: 2px; // Explicit value
+    margin-left: $grid-unit-10; // 8px
+    height: $grid-unit-20 + 4px; // 20px
+    font-weight: 500;
+  }
+}
+
+/* Modal header styles */
+.classact-modal-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: $grid-unit-20; // 16px + padding
+  padding-bottom: $grid-unit-15; // 12px
+  border-bottom: 1px solid $gray-200;
+  
+  .classact-block-title {
+    margin-bottom: 0;
+    flex-grow: 1;
+  }
+  
+  // Better handle responsive layout
+  @media (max-width: $break-small) {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    .classact-block-title__count {
+      margin-left: 0;
+      margin-top: $grid-unit-05; // 4px
+    }
+  }
+}
+
+/* WordPress admin UI styling for the modal */
+.components-modal__content {
+  .classact-modal-header {
+    padding-top: $grid-unit-10; // 8px
+  }
+  
+  .components-form-token-field__label,
+  .components-textarea-control__label {
+    font-size: $default-font-size;
+    font-weight: 500;
+  }
+  
+  /* Accessibility focus styles for form fields */
+  .components-form-token-field__input-container:focus-within {
+    box-shadow: 0 0 0 2px var(--wp-admin-theme-color);
+    outline: 2px solid transparent;
+  }
+  
+  .components-textarea-control__input:focus {
+    box-shadow: 0 0 0 2px var(--wp-admin-theme-color);
+    outline: 2px solid transparent;
+  }
+  
+  /* Help text styling */
+  .components-form-token-field__help,
+  .components-textarea-control__help {
+    margin-top: $grid-unit-05; // 4px
+    margin-bottom: $grid-unit-15; // 12px
+    font-size: 12px;
+    color: $gray-700;
+  }
+  
+  /* Token field focus improvements */
+  .components-form-token-field__token {
+    // Make tokens easier to spot
+    background-color: rgba(var(--wp-admin-theme-color-rgb), 0.1);
+    
+    &:focus-within {
+      box-shadow: 0 0 0 1px var(--wp-admin-theme-color);
+    }
+  }
+  
+  /* Spacing for notice components inside the modal */
+  .components-notice {
+    margin: 0 0 $grid-unit-20 0; // 16px bottom margin
+  }
+}
+
+/* Utility classes to replace inline styles */
+.classact-spacer {
+  height: $grid-unit-10; // 8px
+}
+
+.classact-button-group {
+  display: flex;
+  gap: $grid-unit-10; // 8px
+  justify-content: space-between;
+  margin-bottom: $grid-unit-10; // 8px
+}
+
+.classact-full-width-button {
+  width: 100%;
+  justify-content: center !important;
+  margin-bottom: $grid-unit-10; // 8px
+}
+
+.classact-modal-button-group {
+  margin-top: $grid-unit-10; // 8px
+  display: flex;
+  gap: $grid-unit-05; // 4px
+  flex-wrap: wrap;
+  
+  @media (min-width: $break-small) {
+    gap: $grid-unit-10; // Increase gap at larger screen sizes (8px)
+  }
+}
+
+/* Visually hidden for screen readers */
+.classact-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Error message styling */
+.classact-error-message {
+  margin-bottom: $grid-unit-15; // 12px
+}
+
+/* Enhance the Notice component styling for our use case */
+.components-notice.classact-error-message {
+  margin-bottom: $grid-unit-15; // 12px
+  
+  // Ensure the notice is properly contained
+  .components-notice__content {
+    margin: 0;
+  }
+}
