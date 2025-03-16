@@ -36,6 +36,9 @@ if ( ! defined( 'CLASSACT_BUILD_DIR' ) ) {
 if ( ! defined( 'CLASSACT_BUILD_URL' ) ) {
     define( 'CLASSACT_BUILD_URL', CLASSACT_URL . 'build/' . CLASSACT_VERSION );
 }
+if( ! defined( 'CLASSACT_DISABLE_AUTOUPDATE' ) ) {
+    define( 'CLASSACT_DISABLE_AUTOUPDATE', 'false' );
+}
 
 // Load updater class
 require_once CLASSACT_PATH . 'updates.php';
@@ -112,7 +115,7 @@ class Plugin {
      */
     private function init_updater() {
         // Only initialize the updater in the admin area
-        if ( is_admin() && ! wp_doing_ajax() ) {
+        if ( is_admin() && ! wp_doing_ajax() && CLASSACT_DISABLE_AUTOUPDATE !== 'true' ) {
             new Updater(
                 CLASSACT_FILE,
                 'classact',
