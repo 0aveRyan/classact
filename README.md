@@ -44,7 +44,7 @@ https://github.com/user-attachments/assets/9a4b0713-4c6a-464d-b455-00f1120334a2
   - **Length Sort**: Sort by class name length
   - **Block Style to End**: Move WordPress style classes to the end
 - **Cleanup Options**:
-  - **Clear Custom**: Keep only WordPress style classes (is-style-*)
+  - **Clear Custom**: Keep only WordPress Block Style classes (is-style-*)
   - **Clear All**: Remove all classes from the block
 
 ## Notes
