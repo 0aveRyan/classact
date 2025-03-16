@@ -2,7 +2,7 @@
 
 A miniplugin for managing CSS classes visually in the WordPress Block Editor.
 
-![classact-preview](https://github.com/user-attachments/assets/be2d005e-00fa-41db-b0c9-41042a5f6a05)
+https://github.com/user-attachments/assets/9a4b0713-4c6a-464d-b455-00f1120334a2
 
 ## Features
 
