@@ -11,7 +11,7 @@ https://github.com/user-attachments/assets/9a4b0713-4c6a-464d-b455-00f1120334a2
 - **Visual Token Management**: See and manipulate CSS classes as visual tokens
 - **Quick Actions**: One-click operations to copy, sort, and remove classes
 - **Enhanced Modal**: Full-featured class management modal with advanced sorting options
-- **Keyboard Shortcut**: Press `Alt+C` to quickly manage, copy and clear CSS classes for the selected block
+- **Keyboard Shortcut**: Press `alt + c`|`option + c` to quickly manage, copy and clear CSS classes for the selected block
 - **Hides Core CSS Field in Advanced Panel**: Hides the Core field using CSS -- easy to see and unhide (or just open the modal)
 
 ## Usage
