@@ -122,7 +122,7 @@ class Updater {
 		if ( $plugin_file === $this->plugin_basename ) {
 			$plugin_meta[] = sprintf(
 				'<span class="classact-update-info">%s</span>',
-				esc_html__( 'Updates via ClassAct', 'classact' )
+				esc_html__( 'Updates via Cloudflare & GitHub', 'classact' )
 			);
 		}
 		return $plugin_meta;

@@ -40,14 +40,6 @@ if( ! defined( 'CLASSACT_DISABLE_AUTOUPDATE' ) ) {
     define( 'CLASSACT_DISABLE_AUTOUPDATE', 'false' );
 }
 
-// Ensure includes directory exists
-if ( ! file_exists( CLASSACT_PATH . 'includes' ) ) {
-    mkdir( CLASSACT_PATH . 'includes' );
-}
-
-// Load updater class
-require_once CLASSACT_PATH . 'updates.php';
-
 // Autoloader for plugin classes
 spl_autoload_register( function( $class ) {
     // Project-specific namespace prefix
