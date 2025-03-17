@@ -50,10 +50,6 @@ https://github.com/user-attachments/assets/9a4b0713-4c6a-464d-b455-00f1120334a2
 ## Notes
 
 - The token field validates class names using regex to ensure proper CSS naming conventions
-- You can always override validation by using the text input
+- You can always override validation by using the text input (hidden but still in the DOM, or use the Textarea in the modal)
 - WordPress block style classes (`is-style-*`) receive special handling
 - All changes sync with the core WordPress class input field
-
-## Keyboard Shortcuts
-
-- `Alt+C`: Open the class management modal for the currently selected block
