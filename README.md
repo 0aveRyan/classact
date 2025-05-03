@@ -85,7 +85,7 @@ Customize the keyboard shortcut:
 ```php
 add_filter('classact_keyboard_shortcut', function($shortcut) {
     return array(
-        'modifier' => 'shift',
+        'modifier' => 'ctrl',
         'character' => 'c',
     );
 });
