@@ -1,10 +1,11 @@
-# ClassAct 🎭
+# ClassAct
 
 A lightweight WordPress plugin for visually managing CSS classes in the Block Editor.
 
 ![ClassAct Demo](https://github.com/user-attachments/assets/9a4b0713-4c6a-464d-b455-00f1120334a2)
 
 ## 📦 [Download](https://github.com/0aveRyan/classact/releases/latest/download/classact.zip)
+
 ## ✨ Features
 
 - **🔖 Visual Token Management** - Manipulate CSS classes as visual tokens
