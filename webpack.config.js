@@ -14,6 +14,9 @@ const classactConfig = {
 	output: {
 		path: path.resolve( __dirname, 'build/' + version ),
 	},
+	stats: {
+		warnings: false, // Suppress all webpack warnings
+	},
 };
 
 module.exports = merge(

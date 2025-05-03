@@ -1,0 +1,25 @@
+{
+	"landingPage": "/wp-admin/post-new.php?post_type=page",
+	"preferredVersions": {
+		"php": "8.2",
+		"wp": "latest"
+	},
+	"steps": [
+		{
+			"step": "login",
+			"username": "admin",
+			"password": "password"
+		},
+		{
+			"step": "installPlugin",
+			"pluginZipFile": {
+				"resource": "url",
+				"url": "https://github.com/0aveRyan/classact/releases/latest/download/classact.zip"
+			}
+		},
+		{
+			"step": "activatePlugin",
+			"pluginName": "ClassAct"
+		}
+	]
+}

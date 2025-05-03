@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<ruleset name="ClassAct">
+	<description>ClassAct WordPress plugin coding standards</description>
+
+	<!-- Include WordPress Coding Standards -->
+	<rule ref="WordPress">
+		<!-- Temporary fix for PHP 8.1+ deprecation warnings -->
+		<exclude name="WordPress.WP.I18n" />
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals" />
+		<!-- Exclude file naming conventions -->
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<!-- Allow using reserved words as parameter names -->
+		<exclude name="Universal.NamingConventions.NoReservedKeywordParameterNames.classFound" />
+	</rule>
+
+	<!-- Check PHP files only -->
+	<arg name="extensions" value="php"/>
+	
+	<!-- Show progress and sniff codes -->
+	<arg value="ps"/>
+	
+	<!-- Check all files in this directory and subdirectories -->
+	<file>.</file>
+	
+	<!-- Exclude vendor directory -->
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+	<exclude-pattern>/build/*</exclude-pattern>
+	<exclude-pattern>/tests/*</exclude-pattern>
+</ruleset>

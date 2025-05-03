@@ -1,0 +1,6 @@
+# Ignore coverage reports
+coverage/
+coverage.xml
+
+# Ignore PHPUnit cache
+.phpunit.result.cache

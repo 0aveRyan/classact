@@ -6,7 +6,7 @@ on:
 
 permissions:
     contents: write
-    id-token: write     # Required for attestation
+    id-token: write # Required for attestation
     attestations: write # Required for attestation
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
                   asset_path: ./classact.zip
                   asset_name: classact.zip
                   asset_content_type: application/zip
-                  
+
             - name: Generate build provenance attestation
               uses: johnbillion/action-wordpress-plugin-attestation@0.7.0
               id: attestation
@@ -49,20 +49,20 @@ jobs:
                   plugin: classact
                   version: ${{ github.event.release.tag_name }}
                   zip-url: 'https://updates.wpadmin.app/download/plugin/classact/${{ github.event.release.tag_name }}'
-                  
+
             - name: Log Attestation Information
               run: |
-                echo "Attestation ID: ${{ steps.attestation.outputs.attestation-id }}"
-                echo "Attestation URL: ${{ steps.attestation.outputs.attestation-url }}"
-                echo "Bundle Path: ${{ steps.attestation.outputs.bundle-path }}"
-                echo "ZIP URL: ${{ steps.attestation.outputs.zip-url }}"
+                  echo "Attestation ID: ${{ steps.attestation.outputs.attestation-id }}"
+                  echo "Attestation URL: ${{ steps.attestation.outputs.attestation-url }}"
+                  echo "Bundle Path: ${{ steps.attestation.outputs.bundle-path }}"
+                  echo "ZIP URL: ${{ steps.attestation.outputs.zip-url }}"
 
             - name: Notify Update Server
               run: |
-                curl -X POST https://updates.wpadmin.app/invalidate \
-                  -H "Content-Type: application/json" \
-                  -d '{"type": "plugin", "slug": "classact", "secret": "${{ secrets.PRESSFLARE_WEBHOOK_KEY }}"}'
+                  curl -X POST https://updates.wpadmin.app/invalidate \
+                    -H "Content-Type: application/json" \
+                    -d '{"type": "plugin", "slug": "classact", "secret": "${{ secrets.PRESSFLARE_WEBHOOK_KEY }}"}'
 
             - name: Verify Update Cache Invalidation
               run: |
-                curl -I https://updates.wpadmin.app/download/plugin/classact/${{ github.event.release.tag_name }}
+                  curl -I https://updates.wpadmin.app/download/plugin/classact/${{ github.event.release.tag_name }}

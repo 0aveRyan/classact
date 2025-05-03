@@ -1,18 +1,22 @@
 <?php
 /**
- * ClassAct Updater
+ * ClassAct Updater System
  *
  * A simple, secure updater class for ClassAct plugin using a custom update server.
+ * This file provides the functionality to check for updates from a custom server,
+ * validate them, and integrate with the WordPress plugin update system.
  *
  * @package     ClassAct
+ * @subpackage  Updates
  * @author      Dave Ryan
  * @copyright   Copyright (c) 2025, Dave Ryan
  * @license     GPL-2.0+
+ * @since       1.0.0
  */
 
 namespace ClassAct;
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -21,12 +25,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Updater Class
  *
  * Handles checking for updates and integrating with the WordPress update system.
+ * Uses WordPress transients for caching update data to minimize external requests.
+ *
+ * This class provides a secure way to check for and apply plugin updates from
+ * a custom server, rather than relying on the WordPress.org plugin repository.
+ *
+ * @since 1.0.0
  */
 class Updater {
 
 	/**
 	 * The API endpoint URL
 	 *
+	 * URL of the update server that provides version information.
+	 * Defaults to the secure updates.wpadmin.app service.
+	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @var string
 	 */
 	private $api_url = 'https://updates.wpadmin.app/';
@@ -34,6 +49,11 @@ class Updater {
 	/**
 	 * The plugin slug
 	 *
+	 * Unique identifier for the plugin used by the update server.
+	 * This should match the slug configured on the update server.
+	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @var string
 	 */
 	private $plugin_slug;
@@ -41,6 +61,11 @@ class Updater {
 	/**
 	 * The plugin basename
 	 *
+	 * Full plugin basename (plugin-directory/plugin-file.php) used by WordPress
+	 * to identify the plugin in the plugin list and update system.
+	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @var string
 	 */
 	private $plugin_basename;
@@ -48,6 +73,11 @@ class Updater {
 	/**
 	 * The current plugin version
 	 *
+	 * The installed version of the plugin, used to compare against
+	 * the version from the update server to determine if an update is needed.
+	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @var string
 	 */
 	private $version;
@@ -55,6 +85,11 @@ class Updater {
 	/**
 	 * Cache key for update data
 	 *
+	 * Transient key used to store update information temporarily
+	 * to avoid frequent external API calls.
+	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @var string
 	 */
 	private $cache_key;
@@ -62,6 +97,11 @@ class Updater {
 	/**
 	 * Cache expiration in hours
 	 *
+	 * How long the update data should be cached before checking again.
+	 * Default is 12 hours to balance update responsiveness with server load.
+	 *
+	 * @since 1.0.0
+	 * @access private
 	 * @var int
 	 */
 	private $cache_expiration = 12;
@@ -74,42 +114,25 @@ class Updater {
 	 * @param string $version       Current plugin version.
 	 */
 	public function __construct( $plugin_file, $plugin_slug, $version ) {
-		// Set class properties
+		// Set class properties.
 		$this->plugin_basename = plugin_basename( $plugin_file );
-		$this->plugin_slug = sanitize_key( $plugin_slug );
-		$this->version = sanitize_text_field( $version );
-		$this->cache_key = 'classact_' . $this->plugin_slug . '_update_data';
+		$this->plugin_slug     = sanitize_key( $plugin_slug );
+		$this->version         = sanitize_text_field( $version );
+		$this->cache_key       = 'classact_' . $this->plugin_slug . '_update_data';
 
-		// Hook into WordPress update system
+		// Hook into WordPress update system.
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_for_update' ) );
-		
-		// Filter the plugin API response for detailed information
+
+		// Filter the plugin API response for detailed information.
 		add_filter( 'plugins_api', array( $this, 'plugins_api_filter' ), 10, 3 );
-		
-		// Clean up after ourselves by removing the filter when the plugin is updated
+
+		// Clean up after ourselves by removing the filter when the plugin is updated.
 		add_action( 'upgrader_process_complete', array( $this, 'clear_update_cache' ), 10, 2 );
-		
-		// Add our self-hosted plugin updater message
+
+		// Add our self-hosted plugin updater message.
 		add_filter( 'plugin_row_meta', array( $this, 'add_plugin_update_info' ), 10, 2 );
 	}
-	
-	/**
-	 * Set the API URL
-	 *
-	 * @param string $url The URL to set.
-	 */
-	public function set_api_url( $url ) {
-		$this->api_url = esc_url_raw( $url );
-	}
-	
-	/**
-	 * Set cache expiration in hours
-	 *
-	 * @param int $hours Hours until cache expires.
-	 */
-	public function set_cache_expiration( $hours ) {
-		$this->cache_expiration = absint( $hours );
-	}
+
 
 	/**
 	 * Add information about the update server to the plugin row
@@ -139,42 +162,42 @@ class Updater {
 			return $transient;
 		}
 
-		// Get update data
+		// Get update data.
 		$update_data = $this->get_update_data();
-		
+
 		if ( false === $update_data ) {
 			return $transient;
 		}
 
-		// If there's a newer version, add it to the transient
+		// If there's a newer version, add it to the transient.
 		if ( isset( $update_data->version ) && version_compare( $this->version, $update_data->version, '<' ) ) {
-			$plugin_info = new \stdClass();
-			$plugin_info->slug = $this->plugin_slug;
-			$plugin_info->plugin = $this->plugin_basename;
+			$plugin_info              = new \stdClass();
+			$plugin_info->slug        = $this->plugin_slug;
+			$plugin_info->plugin      = $this->plugin_basename;
 			$plugin_info->new_version = $update_data->version;
-			$plugin_info->url = $update_data->homepage ?? '';
-			$plugin_info->package = $update_data->download_url ?? '';
-			
-			// Include icons if available
+			$plugin_info->url         = $update_data->homepage ?? '';
+			$plugin_info->package     = $update_data->download_url ?? '';
+
+			// Include icons if available.
 			if ( isset( $update_data->icons ) && is_object( $update_data->icons ) ) {
 				$plugin_info->icons = (array) $update_data->icons;
 			}
-			
-			// Include banners if available
+
+			// Include banners if available.
 			if ( isset( $update_data->banners ) && is_object( $update_data->banners ) ) {
 				$plugin_info->banners = (array) $update_data->banners;
 			}
 
-			// Add tested up to if available
+			// Add tested up to if available.
 			if ( isset( $update_data->tested ) ) {
 				$plugin_info->tested = $update_data->tested;
 			}
-			
-			// Add requires PHP if available
+
+			// Add requires PHP if available.
 			if ( isset( $update_data->requires_php ) ) {
 				$plugin_info->requires_php = $update_data->requires_php;
 			}
-			
+
 			$transient->response[ $this->plugin_basename ] = $plugin_info;
 		}
 
@@ -190,47 +213,47 @@ class Updater {
 	 * @return false|object The API response or unchanged result.
 	 */
 	public function plugins_api_filter( $result, $action, $args ) {
-		// Only filter for plugin information API requests for our plugin
+		// Only filter for plugin information API requests for our plugin.
 		if ( 'plugin_information' !== $action || ! isset( $args->slug ) || $args->slug !== $this->plugin_slug ) {
 			return $result;
 		}
 
 		$update_data = $this->get_update_data();
-		
+
 		if ( false === $update_data ) {
 			return $result;
 		}
 
-		// Convert to the format WordPress expects
-		$api_response = new \stdClass();
-		$api_response->name = $update_data->name ?? $this->plugin_slug;
-		$api_response->slug = $this->plugin_slug;
-		$api_response->version = $update_data->version;
-		$api_response->author = $update_data->author ?? '';
-		$api_response->homepage = $update_data->homepage ?? '';
-		$api_response->requires = $update_data->requires ?? '';
-		$api_response->tested = $update_data->tested ?? '';
-		$api_response->requires_php = $update_data->requires_php ?? '';
-		$api_response->downloaded = 0;
+		// Convert to the format WordPress expects.
+		$api_response                = new \stdClass();
+		$api_response->name          = $update_data->name ?? $this->plugin_slug;
+		$api_response->slug          = $this->plugin_slug;
+		$api_response->version       = $update_data->version;
+		$api_response->author        = $update_data->author ?? '';
+		$api_response->homepage      = $update_data->homepage ?? '';
+		$api_response->requires      = $update_data->requires ?? '';
+		$api_response->tested        = $update_data->tested ?? '';
+		$api_response->requires_php  = $update_data->requires_php ?? '';
+		$api_response->downloaded    = 0;
 		$api_response->download_link = $update_data->download_url ?? '';
-		
-		// Add banners if available
+
+		// Add banners if available.
 		if ( isset( $update_data->banners ) && is_object( $update_data->banners ) ) {
 			$api_response->banners = (array) $update_data->banners;
 		}
-		
-		// Add icons if available
+
+		// Add icons if available.
 		if ( isset( $update_data->icons ) && is_object( $update_data->icons ) ) {
 			$api_response->icons = (array) $update_data->icons;
 		}
-		
-		// Add sections if available (description, changelog, etc.)
+
+		// Add sections if available (description, changelog, etc.).
 		if ( isset( $update_data->sections ) && is_object( $update_data->sections ) ) {
 			$api_response->sections = (array) $update_data->sections;
 		} else {
 			$api_response->sections = array(
 				'description' => isset( $update_data->description ) ? $update_data->description : '',
-				'changelog' => isset( $update_data->changelog ) ? $update_data->changelog : '',
+				'changelog'   => isset( $update_data->changelog ) ? $update_data->changelog : '',
 			);
 		}
 
@@ -243,47 +266,47 @@ class Updater {
 	 * @return false|object Update data or false on error
 	 */
 	private function get_update_data() {
-		// Check cache first
+		// Check cache first.
 		$cached_data = get_transient( $this->cache_key );
 		if ( false !== $cached_data ) {
 			return json_decode( $cached_data );
 		}
 
-		// Build the request URL
+		// Build the request URL.
 		$request_params = array(
 			'plugin_slug' => $this->plugin_slug,
-			'version' => $this->version,
+			'version'     => $this->version,
 		);
-		
+
 		$request_url = add_query_arg( $request_params, $this->api_url );
 
-		// Make the request with proper timeout and security
-		$response = wp_remote_get( 
-			$request_url, 
+		// Make the request with proper timeout and security.
+		$response = wp_remote_get(
+			$request_url,
 			array(
-				'timeout' => 10,
+				'timeout'   => 10,
 				'sslverify' => true,
-				'headers' => array(
+				'headers'   => array(
 					'Accept' => 'application/json',
 				),
-			) 
+			)
 		);
 
-		// Handle errors
+		// Handle errors.
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			return false;
 		}
 
-		// Parse the response
+		// Parse the response.
 		$response_body = wp_remote_retrieve_body( $response );
-		$update_data = json_decode( $response_body );
+		$update_data   = json_decode( $response_body );
 
-		// Validate the response
+		// Validate the response.
 		if ( ! is_object( $update_data ) || empty( $update_data->version ) ) {
 			return false;
 		}
 
-		// Cache the result
+		// Cache the result.
 		set_transient( $this->cache_key, $response_body, $this->cache_expiration * HOUR_IN_SECONDS );
 
 		return $update_data;
@@ -293,14 +316,14 @@ class Updater {
 	 * Clear update cache when plugin is updated
 	 *
 	 * @param \WP_Upgrader $upgrader WP_Upgrader instance.
-	 * @param array       $options  Array of bulk item update data.
+	 * @param array        $options  Array of bulk item update data.
 	 */
 	public function clear_update_cache( $upgrader, $options ) {
 		if ( 'update' === $options['action'] && 'plugin' === $options['type'] ) {
-			// Check if our plugin was updated
+			// Check if our plugin was updated.
 			if ( isset( $options['plugins'] ) && is_array( $options['plugins'] ) ) {
 				if ( in_array( $this->plugin_basename, $options['plugins'], true ) ) {
-					// Clear our transient
+					// Clear our transient.
 					delete_transient( $this->cache_key );
 				}
 			}

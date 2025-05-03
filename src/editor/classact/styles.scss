@@ -2,7 +2,10 @@
  * ClassAct - CSS Class Management Styles
  */
 
-// Import WordPress Base Styles - using @import for compatibility
+// Import WordPress Base Styles - using @import for now
+// TODO: These will need to be updated to @use when Dart Sass 3.0 is released
+// See migration guide: https://sass-lang.com/d/import
+// The current setup uses the deprecated @import syntax but works with WordPress dependencies
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/breakpoints";
