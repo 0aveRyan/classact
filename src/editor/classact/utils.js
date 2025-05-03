@@ -72,9 +72,19 @@ export const TIMING = {
  * @returns {string[]} Array of unique CSS class names.
  */
 export const parseClassNames = ( classString ) => {
-	return [
-		...new Set( ( classString || '' ).split( /\s+/ ).filter( Boolean ) ),
-	];
+	// Ensure classString is a valid string, with stronger validation to prevent errors
+	if (classString === undefined || classString === null || typeof classString !== 'string') {
+		return [];
+	}
+	
+	try {
+		return [
+			...new Set( classString.split( /\s+/ ).filter( Boolean ) ),
+		];
+	} catch (e) {
+		// Return empty array if any operations fail
+		return [];
+	}
 };
 
 /**
@@ -114,6 +124,9 @@ export const sanitizeAndValidateClasses = ( newClasses ) => {
  * @returns {string[]} Sorted array of CSS class names.
  */
 export const sortClassesAlphabetically = ( classesArray ) => {
+	if (!Array.isArray(classesArray) || !classesArray.length) {
+		return [];
+	}
 	return classesArray.slice().sort( ( a, b ) => {
 		const strA = String( a );
 		const strB = String( b );
@@ -147,6 +160,9 @@ export const sortClassesAlphabetically = ( classesArray ) => {
  * @returns {string[]} Sorted array of CSS class names.
  */
 export const sortClassesByLength = ( classesArray ) => {
+	if (!Array.isArray(classesArray) || !classesArray.length) {
+		return [];
+	}
 	return classesArray.slice().sort( ( a, b ) => a.length - b.length );
 };
 
@@ -165,8 +181,11 @@ export const isStyleClass = ( className ) => {
  * @returns {string[]} Array with the style class moved to the end.
  */
 export const moveStyleClassToEnd = ( classes ) => {
+	if (!Array.isArray(classes) || !classes.length) {
+		return [];
+	}
 	const result = [ ...classes ]; // Create a copy to avoid mutating the original
-	const index = result.findIndex( ( cls ) => cls.startsWith( 'is-style-' ) );
+	const index = result.findIndex( ( cls ) => cls && typeof cls === 'string' && cls.startsWith( 'is-style-' ) );
 	if ( index !== -1 ) {
 		const [ styleClass ] = result.splice( index, 1 );
 		result.push( styleClass );
@@ -182,6 +201,9 @@ export const moveStyleClassToEnd = ( classes ) => {
  * @returns {string[]} Sorted array with style classes at the end.
  */
 export const autoSortClasses = ( classesArray ) => {
+	if (!Array.isArray(classesArray) || !classesArray.length) {
+		return [];
+	}
 	return moveStyleClassToEnd( sortClassesAlphabetically( classesArray ) );
 };
 
@@ -197,6 +219,9 @@ export const autoSortClasses = ( classesArray ) => {
  * @returns {string[]} Array with all non-style classes removed.
  */
 export const clearExceptStyleClasses = ( classes ) => {
+	if (!Array.isArray(classes) || !classes.length) {
+		return [];
+	}
 	return classes.filter( isStyleClass );
 };
 
@@ -217,6 +242,14 @@ export const classArrayToString = ( classes ) => {
  * @returns {Object} Statistics about the classes with count of total, style, and custom classes
  */
 export const getClassStats = ( classes ) => {
+	if (!Array.isArray(classes) || !classes.length) {
+		return {
+			total: 0,
+			styleClasses: 0,
+			customClasses: 0,
+		};
+	}
+	
 	const styleClasses = classes.filter( isStyleClass );
 
 	return {

@@ -84,6 +84,35 @@ export const useBlockTitle = ( {
 	safeMode = false,
 	fullCustomName = true,
 } ) => {
+	// Format block name - moved outside conditional to maintain hook order
+	const formatBlockName = useMemo(() => {
+		return (blockName) => {
+			if (!blockName || !blockName.includes('/')) return '';
+			const nameParts = blockName.split('/');
+			return nameParts[1]
+				.split('-')
+				.map(
+					(part) =>
+						part.charAt(0).toUpperCase() +
+						part.slice(1)
+				)
+				.join(' ');
+		};
+	}, []);
+
+	// Process heading content - moved outside conditional to maintain hook order
+	const formatHeadingContent = useMemo(() => {
+		return (content) => {
+			if (!content) return '';
+			const textContent = content.replace(/<[^>]*>/g, '');
+			if (textContent.length > 0) {
+				return textContent.length > 30
+					? textContent.substring(0, 27) + '...'
+					: textContent;
+			}
+			return '';
+		};
+	}, []);
 	return useSelect(
 		( select ) => {
 			// If no clientId and no fallback, return default or null based on mode
@@ -95,10 +124,16 @@ export const useBlockTitle = ( {
 			if ( clientId ) {
 				try {
 					const editor = select( blockEditorStore );
+					if (!editor) {
+						return fallbackName || (safeMode ? null : __( 'Block' ));
+					}
 					const blockName = editor.getBlockName( clientId );
 					const blockAttributes =
 						editor.getBlockAttributes( clientId );
 					const blockRegistry = select( 'core/blocks' );
+					if (!blockRegistry) {
+						return blockName || fallbackName || (safeMode ? null : __( 'Block' ));
+					}
 					let blockTypeName = '';
 					let customName = '';
 
@@ -123,19 +158,7 @@ export const useBlockTitle = ( {
 						} else if ( blockType?.title ) {
 							blockTypeName = blockType.title;
 						} else if ( blockName.includes( '/' ) ) {
-							// Format block name if title not available
-							// Use useMemo to avoid recalculating this string formatting on every render
-							blockTypeName = useMemo( () => {
-								const nameParts = blockName.split( '/' );
-								return nameParts[ 1 ]
-									.split( '-' )
-									.map(
-										( part ) =>
-											part.charAt( 0 ).toUpperCase() +
-											part.slice( 1 )
-									)
-									.join( ' ' );
-							}, [ blockName ] );
+							blockTypeName = formatBlockName(blockName);
 						} else {
 							blockTypeName = blockName;
 						}
@@ -154,19 +177,8 @@ export const useBlockTitle = ( {
 						blockAttributes?.content
 					) {
 						// For headings, use content as name
-						// Use useMemo to avoid recalculating this string processing on every render
-						customName = useMemo( () => {
-							const textContent = blockAttributes.content.replace(
-								/<[^>]*>/g,
-								''
-							);
-							if ( textContent.length > 0 ) {
-								return textContent.length > 30
-									? textContent.substring( 0, 27 ) + '...'
-									: textContent;
-							}
-							return '';
-						}, [ blockAttributes.content ] );
+						// Use formatHeadingContent function defined at top level
+						customName = formatHeadingContent(blockAttributes.content);
 					}
 
 					// Format according to WordPress convention
@@ -195,7 +207,7 @@ export const useBlockTitle = ( {
 			// Final fallback
 			return safeMode ? null : fallbackName || __( 'Block' );
 		},
-		[ clientId, fallbackName, safeMode, fullCustomName ]
+		[ clientId || '', fallbackName || '', safeMode, fullCustomName ]
 	);
 };
 
@@ -216,15 +228,18 @@ export const useBlockAttributes = ( { clientId } ) => {
 			if ( ! clientId ) return null;
 
 			const editor = select( blockEditorStore );
+			if (!editor) return null;
+			
+			const blockName = editor.getBlockName( clientId );
+			const blockRegistry = select( 'core/blocks' );
+			
 			return {
-				blockName: editor.getBlockName( clientId ),
+				blockName: blockName,
 				attributes: editor.getBlockAttributes( clientId ),
-				blockType: select( 'core/blocks' ).getBlockType(
-					editor.getBlockName( clientId )
-				),
+				blockType: blockRegistry ? blockRegistry.getBlockType(blockName) : null,
 			};
 		},
-		[ clientId ]
+		[ clientId || '' ]
 	);
 
 	// Update className attribute specifically
@@ -268,8 +283,10 @@ export const useClassManagement = ( {
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ textValue, setTextValue ] = useState( initialClasses || '' );
 
-	// Parse classes into array form
-	const classesArray = parseClassNames( initialClasses );
+	// Parse classes into array form with additional safety
+	const classesArray = useMemo(() => {
+		return parseClassNames(initialClasses) || [];
+	}, [initialClasses || '']);
 
 	// Handle validated class change
 	const handleClassChange = useCallback(

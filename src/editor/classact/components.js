@@ -402,13 +402,13 @@ export const ClassManagementModalContent = ( {
 				/>
 
 				<div className="classact-block-title__count">
-					{ classesArray.length }
+					{ Array.isArray(classesArray) && classesArray ? classesArray.length : 0 }
 				</div>
 			</div>
 
 			<FormTokenField
 				label={ __( 'CSS Classes' ) }
-				value={ classesArray }
+				value={ Array.isArray(classesArray) ? classesArray : [] }
 				placeholder={ __( 'Separate with spaces or commas' ) }
 				onChange={ classManagement.handleClassChange }
 				__experimentalValidateInput={ ( token ) =>
@@ -517,7 +517,7 @@ export const ConnectedClassActModal = ( { clientId, onRequestClose } ) => {
 	} );
 
 	// If no block data yet, return null
-	if ( ! blockAttrs || ! classManagement.classesArray ) {
+	if ( ! blockAttrs || ! classManagement || ! Array.isArray(classManagement.classesArray) ) {
 		return null;
 	}
 
