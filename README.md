@@ -4,8 +4,7 @@ A lightweight WordPress plugin for visually managing CSS classes in the Block Ed
 
 ![ClassAct Demo](https://github.com/user-attachments/assets/9a4b0713-4c6a-464d-b455-00f1120334a2)
 
-## 📦 [Download](https://github.com/0aveRyan/classact/releases/latest/download/classact.zip) | [Try in WordPress Playground](https://playground.wordpress.net/#%7B%22steps%22%3A%5B%7B%22step%22%3A%22login%22%7D%2C%7B%22step%22%3A%22installPlugin%22%2C%22pluginZipFile%22%3A%7B%22resource%22%3A%22url%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2F0aveRyan%2Fclassact%2Freleases%2Flatest%2Fdownload%2Fclassact.zip%22%7D%7D%2C%7B%22step%22%3A%22activatePlugin%22%2C%22pluginName%22%3A%22ClassAct%22%7D%2C%7B%22step%22%3A%22navigateTo%22%2C%22path%22%3A%22%2Fwp-admin%2Fpost-new.php%3Fpost_type%3Dpage%22%7D%5D%2C%22preferredVersions%22%3A%7B%22php%22%3A%228.2%22%2C%22wp%22%3A%22latest%22%7D%7D)
-
+## 📦 [Download](https://github.com/0aveRyan/classact/releases/latest/download/classact.zip)
 ## ✨ Features
 
 - **🔖 Visual Token Management** - Manipulate CSS classes as visual tokens
